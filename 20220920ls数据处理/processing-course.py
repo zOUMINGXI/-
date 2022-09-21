@@ -115,3 +115,12 @@ def cf_cid_cname_field_index_df():
         new_dataframe.append(new_data)
     return pd.DataFrame(new_dataframe)
 
+
+# 获取course和field之间的关系并以字典形式返回
+def get_relation_course_field():
+    data = pd.read_json("course-field.json", lines=True)
+    processed_data = {}
+    for i in range(len(data)):
+        processed_data[data["course_id"][i]] = data["field"][i]
+    return processed_data
+
