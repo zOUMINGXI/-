@@ -27,11 +27,7 @@ def get_relaton_concept_video():
     return get_relation
 
 
-def get_relaton_concept_video_csv(get_relation):
-    get_relation.to_csv("get_relation_concept_video.csv", mode="w", index=False)
 
-
-get_relaton_concept_video_csv(get_relaton_concept_video())
 
 
 
