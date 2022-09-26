@@ -22,8 +22,9 @@ def read_json(file):
 #         df = pd.DataFrame([re.split('\t|\n', x) for x in data])
 #         df = df.drop([2], axis=1)
 #     return df
+
 def get_relation_course_video():
-    data = read_json("../../原始数据/课程信息/course.json")
+    data = read_json("../scripts/entities/course.json")
     data_resource = data[["resource"]]
     df = dict()
     for i in range(0, len(data_resource)):
@@ -35,12 +36,11 @@ def get_relation_course_video():
             for h in range(0, len(dic)):
                 str1 = dic[h]
                 df[str(data_id)][0].append(str(str1["resource_id"]))
-        # print(str(data_id))
-        # print(df[str(data_id)])
-    # df字典key是course id value是video_id 的列表
-    df_result = pd.DataFrame.from_dict(df, orient="index")
-    # df_result=df_result.reset_index()
-    # df_result=df_result.rename(columns={'index':'course_id'})
+
+    # df字典key是course_id , value是video_id 的列表
+    df_result = pd.DataFrame.from_dict(df, orient="index", columns=['video_id'])
+    df_result = df_result.reset_index()
+    df_result = df_result.rename(columns={'index': 'course_id'})
     return df_result
 
 
@@ -49,3 +49,4 @@ def get_relation_course_video_csv(df_result):
 
 
 get_relation_course_video_csv(get_relation_course_video())
+

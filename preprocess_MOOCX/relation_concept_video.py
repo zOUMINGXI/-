@@ -15,11 +15,11 @@ def read_json(file):
 
 def get_relaton_concept_video():
     # 载入概念的词条
-    concepts = read_json("concept.json")
+    concepts = read_json("../scripts/entities/concept.json")
     concepts_dict = concepts[['id', 'name']]
     # 调用其他原始数据
-    concept_id_video = pd.read_csv("concept-video.txt", sep='\t', names=['id', 'ccid'])
-    video_id_ccid = pd.read_csv("video_id-ccid.txt", sep='\t', names=['video_id', 'ccid'])
+    concept_id_video = pd.read_csv("../scripts/relations/concept-video.txt", sep='\t', names=['id', 'ccid'])
+    video_id_ccid = pd.read_csv("../scripts/relations/video_id-ccid.txt", sep='\t', names=['video_id', 'ccid'])
     concept_id_video_id = pd.merge(concept_id_video, video_id_ccid, how='inner', on='ccid')
     # 与原始的概念 数据合并
     relation = pd.merge(concepts_dict, concept_id_video_id, how='inner', on='id')
