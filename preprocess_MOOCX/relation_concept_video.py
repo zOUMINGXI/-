@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 
+
 # json文件的导入
 def read_json(file):
     with open(file, "r", encoding='utf-8') as f:
@@ -9,11 +10,12 @@ def read_json(file):
     df = pd.DataFrame(data)
     return df
 
+
 # course.json 中 ‘resource’ 词条 中的 resource_id -> course_id
 # ‘resource_id’ 在 video_iod-ccid.txt 中 'ccid' -> ‘video_id’('resource_id')
 #  'ccid'  在 concept-video.txt 中 'id' -> 'ccid'
 
-def get_relaton_concept_video():
+def get_relation_concept_video():
     # 载入概念的词条
     concepts = read_json("../scripts/entities/concept.json")
     concepts_dict = concepts[['id', 'name']]
@@ -27,11 +29,12 @@ def get_relaton_concept_video():
     return get_relation
 
 
-def get_relaton_concept_video_csv(get_relation):
+def get_relation_concept_video_csv(get_relation):
     get_relation.to_csv("get_relation_concept_video.csv", mode="w", index=False)
 
 
-get_relaton_concept_video_csv(get_relaton_concept_video())
+# 此函数生成pickle文件
+def get_relation_concept_video_pickle(data):
+    data.to_pickle("get_relation_concept_video.pkl")
 
-
-
+# get_relation_concept_video_csv(get_relation_concept_video())

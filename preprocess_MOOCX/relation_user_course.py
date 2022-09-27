@@ -24,8 +24,14 @@ def get_user_course_relation():  # index:id:course_order
 # get_user_course_relation()
 
 
+# 此函数生成csv文件
 def get_user_course_relation_csv(data):
     data.to_csv("get_user_course_relation.csv", mode="w", index=False)
 
 
-get_user_course_relation_csv(get_user_course_relation())
+# 此函数生成pickle文件
+def get_user_course_relation_pickle(data):
+    data.to_pickle("get_user_course_relation.pkl")
+
+
+# get_user_course_relation_csv(get_user_course_relation())

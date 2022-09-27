@@ -48,5 +48,10 @@ def get_relation_course_video_csv(df_result):
     df_result.to_csv("get_relation_course_video.csv", mode="w", index=False)
 
 
-get_relation_course_video_csv(get_relation_course_video())
+# 此函数生成pickle文件
+def get_relation_course_video_pickle(data):
+    data.to_pickle("get_relation_course_video.pkl")
+
+
+# get_relation_course_video_csv(get_relation_course_video())
 
