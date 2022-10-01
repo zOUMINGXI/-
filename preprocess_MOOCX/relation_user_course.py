@@ -35,3 +35,30 @@ def get_user_course_relation_pickle(data):
 
 
 # get_user_course_relation_csv(get_user_course_relation())
+
+
+def get_user_course_relation_KG(data):
+    with open("get_user_course_relation.kg", "w", encoding="UTF-8") as file:
+        file.write("head_id:token\trelation_id:token\ttail_id:token\n")
+        for i in range(len(data["id"])):
+            if i >= 100:
+                break
+            for j in range(len(data["course_order"][i])):
+                file.write("users." + data["id"])
+                file.write("\t")
+                file.write("users.user.take_courses")
+                file.write("\t")
+                file.write(data["course_order"][i][j])
+                file.write("\n")
+
+
+def get_user_course_relation_link(data):
+    with open("get_user_course_relation.link", "w", encoding="UTF-8") as file:
+        file.write("item_id:token\tentity_id:token\n")
+        for i in range(len(data["id"])):
+            if i >= 100:
+                break
+            file.write(data["id"])
+            file.write("\t")
+            file.write("users." + data["id"][i])
+            file.write("\n")

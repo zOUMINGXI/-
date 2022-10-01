@@ -38,3 +38,30 @@ def get_relation_concept_video_pickle(data):
     data.to_pickle("get_relation_concept_video.pkl")
 
 # get_relation_concept_video_csv(get_relation_concept_video())
+
+
+def get_relation_concept_video_KG(data):
+    with open("get_relation_concept_video.kg", "w", encoding="UTF-8") as file:
+        file.write("head_id:token\trelation_id:token\ttail_id:token\n")
+        for i in range(len(data["id"])):
+            if i >= 100:
+                break
+            for j in range(len(data["video_id"][i])):
+                file.write("concepts." + data["id"])
+                file.write("\t")
+                file.write("concepts.concept.video")
+                file.write("\t")
+                file.write(data["video_id"][i][j])
+                file.write("\n")
+
+
+def get_relation_concept_video_link(data):
+    with open("get_relation_concept_video.link", "w", encoding="UTF-8") as file:
+        file.write("item_id:token\tentity_id:token\n")
+        for i in range(len(data["id"])):
+            if i >= 100:
+                break
+            file.write(data["id"])
+            file.write("\t")
+            file.write("concepts." + data["id"][i])
+            file.write("\n")

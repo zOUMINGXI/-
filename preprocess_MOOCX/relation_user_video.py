@@ -79,3 +79,58 @@ def get_relation_user_video_pickle():
 # get_relation_user_video_pickle()
 # pic = pd.read_pickle("get_relation_user_video.pkl")
 # print(pic)
+
+
+# 此函数用于生成KG格式文件
+def get_relation_user_video_KG():
+    with open("user-video.json", "r", encoding="UTF-8") as file:
+        with open("relation_user_video.kg", "w", encoding="UTF-8") as writing_file:
+            writing_file.write("head_id:token\trelation_id:token\ttail_id:token\n")
+            i = 0
+            while True:
+                line = file.readline()
+                if not line or i >= 100:
+                    break
+                data = json.loads(line)
+                for j in range(len(data["seq"])):
+                    # watch_time = 0
+                    # segment = data["seq"][j]["segment"]
+                    # for i in range(len(segment)):
+                    #     if segment[i]["end_point"] >= segment[i]["start_point"]:
+                    #         watch_time = watch_time + segment[i]["end_point"] - segment[i]["start_point"]
+                    writing_file.write("users." + data["user_id"])
+                    writing_file.write("\t")
+                    # writing_file.write(str(abs(int(watch_time / 10))))
+                    writing_file.write("users.user.watch_video")
+                    writing_file.write("\t")
+                    writing_file.write(data["seq"][j]["video_id"])
+                    writing_file.write("\n")
+                i = i + 1
+
+
+# get_relation_user_video_KG()
+
+
+# 此函数用于生成LINK格式文件
+def get_relation_user_video_link():
+    with open("user-video.json", "r", encoding="UTF-8") as file:
+        with open("relation_user_video.link", "w", encoding="UTF-8") as writing_file:
+            writing_file.write("item_id:token\tentity_id:token\n")
+            i = 0
+            while True:
+                line = file.readline()
+                if not line or i >= 100:
+                    break
+                data = json.loads(line)
+                for j in range(len(data["user_id"])):
+                    # watch_time = 0
+                    # segment = data["seq"][j]["segment"]
+                    # for i in range(len(segment)):
+                    #     if segment[i]["end_point"] >= segment[i]["start_point"]:
+                    #         watch_time = watch_time + segment[i]["end_point"] - segment[i]["start_point"]
+                    writing_file.write(data["user_id"])
+                    writing_file.write("\t")
+                    writing_file.write("users." + data["user_id"])
+                    writing_file.write("\n")
+                i = i + 1
+

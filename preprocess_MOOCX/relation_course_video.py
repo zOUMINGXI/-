@@ -55,3 +55,30 @@ def get_relation_course_video_pickle(data):
 
 # get_relation_course_video_csv(get_relation_course_video())
 
+
+def get_relation_course_video_KG(data):
+    with open("get_relation_course_video.kg", "w", encoding="UTF-8") as file:
+        file.write("head_id:token\trelation_id:token\ttail_id:token\n")
+        for i in range(len(data["course_id"])):
+            if i >= 100:
+                break
+            for j in range(len(data["video_id"][i])):
+                file.write("courses." + data["id"])
+                file.write("\t")
+                file.write("courses.course.contain")
+                file.write("\t")
+                file.write(data["video_id"][i][j])
+                file.write("\n")
+
+
+def get_relation_course_video_link(data):
+    with open("get_relation_course_video.link", "w", encoding="UTF-8") as file:
+        file.write("item_id:token\tentity_id:token\n")
+        for i in range(len(data["course_id"])):
+            if i >= 100:
+                break
+            file.write(data["course_id"])
+            file.write("\t")
+            file.write("courses." + data["id"][i])
+            file.write("\n")
+
