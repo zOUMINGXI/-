@@ -16,7 +16,7 @@ def read_json(file):
     # return print(course)
 
 # 读取用户、课程、概念的数据各个的前100个
-# 得出一个有 entity、item_id 的两个列的列表 其中item_id 仅是按读取行的顺序依次编号
+# 得出一个有 entity、item_id 的两个列的列表数据类型为DataFrame 其中item_id 仅是按读取行的顺序依次编号
 # 其中用户读取了 user_id
 # 课程读取了 course_id
 # 概念读取了概念名 name
