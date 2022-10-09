@@ -83,21 +83,27 @@ def get_relation_course_video_KG(left_link_path, right_link_path, data):
         for i in range(len(data["course_id"])):
             if i >= 100:
                 break
+            left_name = get_entity_name(left_link_path, data["id"][i])
+            if left_name is None:
+                continue
             for j in range(len(data["video_id"][i])):
+                right_name = get_entity_name(right_link_path, data["video_id"][i][j])
+                if right_name is None:
+                    continue
                 # 某课程包含了某视频
-                file.write(get_entity_name(left_link_path, data["id"]))
+                file.write(left_name)
                 file.write("\t")
                 # 关系id规则不太明确，如果出问题可以自行修改
                 file.write("course.course.contain_videos")
                 file.write("\t")
-                file.write(get_entity_name(right_link_path, data["video_id"][i][j]))
+                file.write(right_name)
                 file.write("\n")
                 # 某视频归属于某课程
-                file.write(get_entity_name(right_link_path, data["video_id"][i][j]))
+                file.write(right_name)
                 file.write("\t")
                 file.write("video.video.for_courses")
                 file.write("\t")
-                file.write(get_entity_name(left_link_path, data["id"]))
+                file.write(left_name)
                 file.write("\n")
 
 

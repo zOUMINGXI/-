@@ -102,21 +102,27 @@ def get_relation_user_video_KG(left_link_path, right_link_path):
                 if not line or i >= 100:
                     break
                 data = json.loads(line)
+                left_name = get_entity_name(left_link_path, data["user_id"])
                 for j in range(len(data["seq"])):
+                    right_name = get_entity_name(right_link_path, data["seq"][j]["video_id"])
+                    if left_name is None:
+                        continue
+                    if right_name is None:
+                        continue
                     # 某用户看了某视频
-                    writing_file.write(get_entity_name(left_link_path, data["user_id"]))
+                    writing_file.write(left_name)
                     writing_file.write("\t")
                     # 关系id规则不太明确，如果出问题可以自行修改
                     writing_file.write("user.user.watch_videos")
                     writing_file.write("\t")
-                    writing_file.write(get_entity_name(right_link_path, data["seq"][j]["video_id"]))
+                    writing_file.write(right_name)
                     writing_file.write("\n")
                     # 某视频被某用户看过
-                    writing_file.write(get_entity_name(right_link_path, data["seq"][j]["video_id"]))
+                    writing_file.write(right_name)
                     writing_file.write("\t")
                     writing_file.write("video.video.watched_by")
                     writing_file.write("\t")
-                    writing_file.write(get_entity_name(left_link_path, data["user_id"]))
+                    writing_file.write(left_name)
                     writing_file.write("\n")
                 i = i + 1
 

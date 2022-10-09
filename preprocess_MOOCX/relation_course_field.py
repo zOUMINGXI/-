@@ -49,21 +49,27 @@ def get_relation_course_field_KG(left_link_path, right_link_path, data):
             # 取100条
             if i >= 100:
                 break
+            left_name = get_entity_name(left_link_path, data["id"][i])
+            if left_name is None:
+                continue
             for j in range(len(data["field"][i])):
+                right_name = get_entity_name(right_link_path, data["field"][i][j])
+                if right_name is None:
+                    continue
                 # 某课程与某领域相关
-                file.write(get_entity_name(left_link_path, data["id"]))
+                file.write(left_name)
                 file.write("\t")
                 # 关系id规则不太明确，如果出问题可以自行修改
                 file.write("course.course.fields")
                 file.write("\t")
-                file.write(get_entity_name(right_link_path, data["field"][i][j]))
+                file.write(right_name)
                 file.write("\n")
                 # 某领域包含某课程
-                file.write(get_entity_name(right_link_path, data["field"][i][j]))
+                file.write(right_name)
                 file.write("\t")
                 file.write("field.field.contain_courses")
                 file.write("\t")
-                file.write(get_entity_name(left_link_path, data["id"]))
+                file.write(left_name)
                 file.write("\n")
 
 

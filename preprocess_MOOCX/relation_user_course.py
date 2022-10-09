@@ -62,25 +62,32 @@ def get_user_course_relation_KG(left_link_path, right_link_path, data):
     with open("user_course_relation.kg", "w", encoding="UTF-8") as file:
         file.write("head_id:token\trelation_id:token\ttail_id:token\n")
         for i in range(len(data["id"])):
-            if i >= 100:
-                break
+            # if i >= 100:
+            #     break
+            print(data["id"][i])
+            print(data["course_order"][i])
+            left_name = get_entity_name(left_link_path, data["id"][i])
+            if left_name is None:
+                continue
             for j in range(len(data["course_order"][i])):
                 # 某用户选择了某课程
-                file.write(get_entity_name(left_link_path, data["id"]))
+                right_name = get_entity_name(right_link_path, "C_" + str(data["course_order"][i][j]))
+                if right_name is None:
+                    continue
+                file.write(left_name)
                 file.write("\t")
                 # 关系id规则不太明确，如果出问题可以自行修改
                 file.write("user.user.take_courses")
                 file.write("\t")
-                file.write(get_entity_name(right_link_path, data["course_order"][i][j]))
+                file.write(right_name)
                 file.write("\n")
                 # 某课程被某用户选择
-                file.write(get_entity_name(right_link_path, data["course_order"][i][j]))
+                file.write(right_name)
                 file.write("\t")
                 file.write("course.course.taken_by")
                 file.write("\t")
-                file.write(get_entity_name(left_link_path, data["id"]))
+                file.write(left_name)
                 file.write("\n")
-
 
 # def get_user_course_relation_link(data):
 #     with open("get_user_course_relation.link", "w", encoding="UTF-8") as file:
