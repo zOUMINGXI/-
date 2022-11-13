@@ -12,10 +12,9 @@ import pickle
 batch = 10000
 
 
-def read_json(file, count=0):
+def read_json(file, count=10000):
     with open(file, "r", encoding='utf-8') as f:
         data = f.readlines()
-        print(count, "/", len(data))
         if count < len(data) - batch:
             data = list(map(json.loads, data[count:count + batch]))
         elif len(data) - batch <= count < len(data):
@@ -27,7 +26,7 @@ def read_json(file, count=0):
         return df
 
 
-def get_user_course_relation(count=0):  # index:id:course_order
+def get_user_course_relation(count=10000):  # index:id:course_order
     data = read_json("user.json", count)
     if data is not None:
         data = data[["id", "course_order"]].reset_index()
@@ -68,7 +67,7 @@ def get_entity_name(link_path, item_id):
 
 # left user实体link文件， right course实体link文件
 def get_user_course_relation_KG(left_link_path, right_link_path, data):
-    with open("train_10000_user_course_relation.kg", "w", encoding="UTF-8") as file:
+    with open("test_2000_user_course_relation.kg", "w", encoding="UTF-8") as file:
         for i in range(len(data["id"])):
             # if i >= 2:
             #     break
@@ -106,8 +105,8 @@ user_flag = []
 
 
 def get_user_course_relation_link(data):
-    with open("train_10000_user_course_relation.link", "a", encoding="UTF-8") as file:
-        count = 0
+    with open("test_2000_user_course_relation.link", "w", encoding="UTF-8") as file:
+        count = 13177
         for i in range(len(data["id"])):
             file.write(data["id"][i])
             file.write("\t")
@@ -156,7 +155,7 @@ def get_link_of_large_data():
         file.close()
 
 
-def get_kg_if_large_data():
+def get_kg_of_large_data():
     count = 0
     data = get_user_course_relation(count)
     while data is not None:
@@ -193,8 +192,8 @@ def to_entity_id(origin_file, link_file):
                 target_file.write(user_course_rating_str)
 
 
-def get_user_course_inter(kg_path, link_path):
-    with open("train_10000_user_course_relation.inter", "w", encoding="UTF-8") as inter_file:
+def get_user_course_inter(kg_path, link_path, inter_path):
+    with open(inter_path, "w", encoding="UTF-8") as inter_file:
         with open(kg_path, "r", encoding="UTF-8") as kg_file:
             kg_data = kg_file.readlines()
             with open(link_path, "r", encoding="UTF-8") as link_file:
@@ -244,7 +243,153 @@ def get_user_course_inter(kg_path, link_path):
                         inter_file.write("\t0\n")
 
 
-raw_data = get_user_course_relation()
+def split_user_and_course(link_path):
+    with open(link_path, "r", encoding="UTF-8") as origin:
+        with open("origin_10000_user.link", "a", encoding="UTF-8") as user:
+            with open("origin_10000_course.link", "a", encoding="UTF-8") as course:
+                data = origin.readline()
+                while data:
+                    if re.match(r'U_.*', data):
+                        user.write(data)
+                    else:
+                        course.write(data)
+                    data = origin.readline()
+
+
+def split_inter(inter_path):
+    with open(inter_path, "r", encoding="UTF-8") as file:
+        with open("origin_10000p_user_course_relation.inter", "w", encoding="UTF-8") as target:
+            data = file.readline()
+            while data:
+                arr = data.split("\t")
+                arr[2] = arr[2].split("\n")[0]
+                if arr[2] == "1":
+                    target.write(data)
+                data = file.readline()
+
+
+def select_user_course_into_files(least=5, most=10, kgpath="test.kg", onewayKg="test_oneway.kg", linkpath="test_unsorted.link", dataSize=12000):
+    with open(kgpath, "w", encoding="UTF-8") as kg:
+        with open(linkpath, "w", encoding="UTF-8") as link:
+            with open(onewayKg, "w", encoding="UTF-8") as oneway:
+
+                dataset_num = 0
+
+                user_id = 12960
+                course_id = dataSize + 12960
+
+                courses = dict()
+
+                count = 0
+
+                data = get_user_course_relation(count)
+                while data is not None:
+                    for i in range(len(data["id"])):
+                        if least <= len(data["course_order"][i]) <= most:
+                            if dataset_num < 10010:
+                                dataset_num += 1
+                                continue
+
+                            link.write(data["id"][i])
+                            link.write("\t")
+                            link.write(str(user_id))
+                            link.write("\n")
+
+                            for item in data["course_order"][i]:
+                                if item not in courses:
+                                    courses[item] = course_id
+
+                                    link.write(str(item))
+                                    link.write("\t")
+                                    link.write(str(course_id))
+                                    link.write("\n")
+
+                                    kg.write(str(user_id))
+                                    kg.write("\t")
+                                    kg.write("1\t")
+                                    kg.write(str(course_id))
+                                    kg.write("\n")
+
+                                    kg.write(str(course_id))
+                                    kg.write("\t")
+                                    kg.write("2\t")
+                                    kg.write(str(user_id))
+                                    kg.write("\n")
+
+                                    oneway.write(str(user_id))
+                                    oneway.write("\t")
+                                    oneway.write("1\t")
+                                    oneway.write(str(course_id))
+                                    oneway.write("\n")
+
+                                    course_id += 1
+                                else:
+                                    this_course_id = courses[item]
+
+                                    kg.write(str(user_id))
+                                    kg.write("\t")
+                                    kg.write("1\t")
+                                    kg.write(str(this_course_id))
+                                    kg.write("\n")
+
+                                    kg.write(str(this_course_id))
+                                    kg.write("\t")
+                                    kg.write("2\t")
+                                    kg.write(str(user_id))
+                                    kg.write("\n")
+
+                                    oneway.write(str(user_id))
+                                    oneway.write("\t")
+                                    oneway.write("1\t")
+                                    oneway.write(str(this_course_id))
+                                    oneway.write("\n")
+
+                            user_id += 1
+
+                            dataset_num += 1
+                            if dataset_num >= dataSize + 10010:
+                                return dataset_num
+
+                    count += batch
+                    data = get_user_course_relation(count)
+
+
+def sort_link(linkpath="test_unsorted.link", sortedlinkpath="test.link"):
+    with open(linkpath, "r", encoding="UTF-8") as file:
+        with open(sortedlinkpath, "w", encoding="UTF-8") as sortlink:
+            data = file.readlines()
+            entities = dict()
+            for item in data:
+                entity_id = item.split("\t")
+                print(entity_id)
+                entity_id[1] = entity_id[1].split("\n")[0]
+                entities[entity_id[0]] = int(entity_id[1])
+
+            sorted_entities = sorted(entities.items(), key=lambda x: x[1])
+            for item in sorted_entities:
+                # print(item[0], item[1])
+                sortlink.write(item[0])
+                sortlink.write("\t")
+                sortlink.write(str(item[1]))
+                sortlink.write("\n")
+
+
+
+
+
+# raw_data = get_user_course_relation()
 # get_user_course_relation_link(raw_data)
-get_user_course_relation_KG("train_10000_user_course_relation.link", "train_10000_user_course_relation.link", raw_data)
-# get_user_course_inter("train_10000_user_course_relation_oneway.kg", "train_10000_user_course_relation.link")
+# get_user_course_relation_KG("test_2000_user_course_relation.link", "test_2000_user_course_relation.link", raw_data)
+# get_user_course_inter("test_2000_user_course_relation_oneway.kg", "test_2000_user_course_relation.link")
+# split_user_and_course("test_2000_user_course_relation.link")
+# split_inter("test_2000_user_course_relation.inter")
+# select_user_course_into_files(5, 10, "origin_10000.kg","origin_10000_oneway.kg", "origin_10000.link", 10000)
+# sort_link("origin_10000.link", "origin_10000_sorted.link")
+# get_user_course_inter("origin_10000_oneway.kg", "origin_10000.link", "origin_10000.inter")
+
+# select_user_course_into_files(5, 10, "origin_2000.kg","origin_2000_oneway.kg", "origin_2000.link", 2000)
+# sort_link("origin_2000.link", "origin_2000_sorted.link")
+# get_user_course_inter("origin_2000_oneway.kg", "origin_2000.link", "origin_2000.inter")
+
+# split_inter("origin_10000.inter")
+# split_user_and_course("origin_10000.link")
